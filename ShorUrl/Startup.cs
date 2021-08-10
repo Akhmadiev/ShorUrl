@@ -8,6 +8,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
+using MongoDB.Driver;
+
+using ShorUrl.Interfaces;
+using ShorUrl.Services;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +38,9 @@ namespace ShorUrl
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShorUrl", Version = "v1" });
             });
+
+            services.AddTransient<IDbService>(x => { return new MongoDatabaseService("DB"); });
+            services.AddSingleton<UrlService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -3,6 +3,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using ShorUrl.Services;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +16,27 @@ namespace ShorUrl.Controllers
     [ApiController]
     public class UrlController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<string> GetShort(string url)
-        {
-            var hashids = new Hashids(url); 
-            var id = hashids.Encode(1, 2, 3);
+        private readonly UrlService _urlService;
 
-            return id;
+        public UrlController(UrlService urlService)
+        {
+            _urlService = urlService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<object>> Get(string url)
+        {
+            var urlRec = await _urlService.GetUrl(url);
+            
+            return urlRec;
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<string>> Save(string url)
+        {
+            var urlRec = await _urlService.SaveUrl(url);
+
+            return urlRec.ShortUrl;
         }
     }
 }
